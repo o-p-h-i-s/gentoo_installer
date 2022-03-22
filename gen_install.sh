@@ -6,9 +6,6 @@ set -eu
 partition=${1}
 EFI_filesystem_size='512M'
 SWAP_filesystem_size='4G'
-gentoo_tarball_URL1='https://ftp.jaist.ac.jp/pub/Linux/Gentoo/releases/amd64/autobuilds/current-stage3-amd64-desktop-systemd/stage3-amd64-desktop-systemd-'
-gentoo_tarball_URL2='.tar.xz'
-make_conf=''
 
 # Functions
 function partitioning() {
@@ -31,7 +28,11 @@ function mount_partitions() {
 }
 
 function download_stage_tarball() {
-   wget ${gentoo_tarball_URL1} .* ${gentoo_tarball_URL2}
+   gentoo_tarball_URL1='https://ftp.jaist.ac.jp/pub/Linux/Gentoo/releases/amd64/autobuilds'
+   gentoo_tarball_URL2='/current-stage3-amd64-desktop-systemd'
+   gentoo_tarball_URL3=$(curl ${URL1}'/latest-stage3-amd64-desktop-systemd.txt' | grep -v '^#' | awk '{print substr($1, index($1,"/"))}')
+   gentoo_tarball_PATH="${gentoo_tarball_URL1}${gentoo_tarball_URL2}${gentoo_tarball_URL3}"
+   wget "${gentoo_tarball_PATH}"
 }
 
 function mount_filesystems() {
@@ -44,6 +45,40 @@ function mount_filesystems() {
    mount --make-slave /mnt/gentoo/run
 }
 
+function make_conf() {
+   # These settings were set by the catalyst build script that automatically
+   # built this stage.
+   # Please consult /usr/share/portage/config/make.conf.example for a more
+   # detailed example.
+   COMMON_FLAGS="-march=native -O2 -pipe"
+   CFLAGS="${COMMON_FLAGS}"
+   CXXFLAGS="${COMMON_FLAGS}"
+   FCFLAGS="${COMMON_FLAGS}"
+   FFLAGS="${COMMON_FLAGS}"
+   MAKEOPTS="-j6"
+   ACCEPT_LICENSE="*"
+   ACCEPT_KEYWORDS="~amd64"
+   EMERGE_DEFAULT_OPTS="--ask --verbose"
+   USE="X nvidia intel xinerama initramfs hscolour cjk perl python"
+
+   # NOTE: This stage was built with the bindist Use flag enabled
+   PORTDIR="/var/db/repos/gentoo"
+   DISTDIR="/var/cache/distfiles"
+   PKGDIR="/var/cache/binpkgs"
+
+   # This sets the language of build output to English.
+   # Please keep this setting intact when reporting bugs.
+   LC_MESSAGES=C
+   LINGUAS="en ja"
+   L10N="en ja"
+
+   INPUT_DEVICES="libinput"
+   VIDEO_CARDS="nvidia nouveau intel"
+   GRUB_PLATFORMS="efi-64"
+
+   GENTOO_MIRRORS="http://ftp.iij.ad.jp/pub/linux/gentoo/ ftp://ftp.iij.ad.jp/pub/linux/gentoo/ https://ftp.jaist.ac.jp/pub/Linux/Gentoo/ http://ftp.jaist.ac.jp/pub/Linux/Gentoo/ ftp://ftp.jaist.ac.jp/pub/Linux/Gentoo/ https://ftp.riken.jp/Linux/gentoo/ http://ftp.riken.jp/Linux/gentoo/"
+}
+
 # Main
 partitioning
 format
@@ -51,7 +86,7 @@ mount_partitions
 cd /mnt/gentoo
 download_stage_tarball
 tar xpvf stage3-*.tar.xz --xattrs-include='*.*' --numeric-owner
-echo make_conf > /mnt/gentoo/etc/portage/make.make_conf
+make_conf
 mkdir --parents /mnt/gentoo/etc/portage/repos.conf
 cp /mnt/gentoo/usr/share/portage/config/repos.conf /mnt/gentoo/etc/portage/repos.conf/gentoo.conf
 cp --dereference /etc/resolv.conf /mnt/gentoo/etc/
