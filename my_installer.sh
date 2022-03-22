@@ -29,7 +29,7 @@ echo "Move directory"
 cd /mnt/gentoo
 
 echo "Download stage3 tarball"
-tarball_path3=$(curl -s ${tarball_path1}'/latest-stage3-amd64-desktop-systemd.txt' | grep -v '^#' | a    wk '{print substr($1, index($1,"/"))}') 
+tarball_path3=$(curl -s ${tarball_path1}'/latest-stage3-amd64-desktop-systemd.txt' | grep -v '^#' | awk '{print substr($1, index($1,"/"))}') 
 tarball_url=${tarball_path1}${tarball_path2}${tarball_path3}
 wget "${tarball_url}"
 
