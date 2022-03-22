@@ -15,15 +15,15 @@ sgdisk -n 2:0:-${swap_size} -t 2:8300 ${target_disk}
 sgdisk -n 3:0: -t 3:8200 ${target_disk}
 
 echo "Creating file systems"
-mkfs.vfat -F32 ${target_disk}/1
-mkfs.ext4 ${target_disk}/2
-mkswap ${target_disk}/3
+mkfs.vfat -F32 ${target_disk}1
+mkfs.ext4 ${target_disk}2
+mkswap ${target_disk}3
 
 echo "Mounting partitions"
-mount ${target_disk}/2 /mnt/gentoo
+mount ${target_disk}2 /mnt/gentoo
 mkdir -p /mnt/gentoo/boot
-mount ${target_disk}/1 /mnt/gentoo/boot
-swapon ${target_disk}/3
+mount ${target_disk}1 /mnt/gentoo/boot
+swapon ${target_disk}3
 
 echo "Move directory"
 cd /mnt/gentoo
