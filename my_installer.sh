@@ -9942,7 +9942,7 @@ systemctl preset-all
 emerge net-misc/dhcpcd
 
 echo "###Setting boot"
-echo ">=sys-boot/grub-2.06-r1 mount"
+echo ">=sys-boot/grub-2.06-r1 mount" > /etc/portage/package.use/grub
 emerge --update --newuse sys-boot/grub
 emerge os-prober
 grub-install --target=x86_64-efi --efi-direcotry=/boot --removable
