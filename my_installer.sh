@@ -51,7 +51,7 @@ FFLAGS="${COMMON_FLAGS}"
 MAKEOPTS="-j6"
 ACCEPT_LICENSE="*"
 # ACCEPT_KEYWORDS="~amd64"
-EMERGE_DEFAULT_OPTS="--ask --verbose"
+# EMERGE_DEFAULT_OPTS="--ask --verbose"
 # USE="X nvidia intel xinerama initramfs hscolour cjk perl python"
 
 # NOTE: This stage was built with the bindist Use flag enabled
