@@ -9953,3 +9953,4 @@ grub-mkconfig -o /boot/grub/grub.cfg
 echo "###Finish autoinstalling"
 echo "###Setting root password & reboot system"
 echo "good luck"
+EOF
