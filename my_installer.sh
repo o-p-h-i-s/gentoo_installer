@@ -9937,8 +9937,7 @@ Name=en*
 [Network]
 DHCP=yes
 EOT
-systemctl
-enable systemd-networkd.service
+systemctl enable systemd-networkd.service
 systemctl preset-all
 emerge net-misc/dhcpcd
 
