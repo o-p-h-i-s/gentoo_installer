@@ -1,5 +1,5 @@
 #!/bin/sh
-set -eu
+set -e
 
 ## variables
 target_disk=$1
@@ -8,7 +8,7 @@ swap_size=8G
 path_head="https://ftp.jaist.ac.jp/pub/Linux/Gentoo/releases/amd64/autobuilds/"
 path_body="current-stage3-amd64-desktop-openrc/"
 latest=${path_head}"latest-stage3-amd64-desktop-openrc.txt"
-path_footer=$(curl -Ss ${latest} | grep -v '^#' | cut -d" " -f1)
+path_footer=$(curl -Ss ${latest} | grep -v '^#' | awk -F "[/ ]" '{print $2}')
 path_tarball=${path_head}${path_body}${path_footer}
 compile_opts=$(cat << EOF
 # These settings were set by the catalyst build script that automatically
@@ -67,7 +67,7 @@ mkswap ${target_disk}3
 echo "-----------------------
 - Mounting partitions -
 -----------------------"
-swapon ${target_disk}
+swapon ${target_disk}3
 mount ${target_disk}2 /mnt/gentoo
 
 echo "---------------------------------
