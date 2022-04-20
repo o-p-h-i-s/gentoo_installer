@@ -118,7 +118,7 @@ mount /dev/sda1 /boot
 echo "-------------------------------
 - Mounting the boot partition -
 -------------------------------"
-mount /dev/sda1 /boot
+mount /dev/sdb1 /boot
 
 echo "-----------------------
 - Configuring Portage -
