@@ -193,8 +193,7 @@ echo GRUB_DISABLE_OS_PROBER=false >> /etc/default/grub
 echo GRUB_EARLY_INITRD_LINUX_CUSTOM="ucode.cpio" >> /etc/default/grub
 grub-mkconfig -o /boot/grub/grub.cfg
 
-echo 
-"-----------------------------------------
+echo "-----------------------------------------
 - Setting root password & reboot system -
 - #passwd                               -
 - #exit                                 -
