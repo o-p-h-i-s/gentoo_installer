@@ -95,6 +95,7 @@ echo "-------------------------------
 - Unpacking the stage tarball -
 -------------------------------"
 tar xpvf stage3-*.tar.xz --xattrs-include='*.*' --numeric-owner
+rm /stage3-*.tar.*
 
 ans_yN
 echo "-------------------------------
