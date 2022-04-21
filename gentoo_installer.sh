@@ -132,6 +132,16 @@ echo "--------------------------------
 - Entering the new environment -
 --------------------------------"
 chroot /mnt/gentoo /bin/bash << EOT
+## functions
+# debug
+function ans_yN() {
+        read -p "ok? (y/N): " yn
+        case $yn in
+                "" | [yY]* ) :;;
+                [nN]* ) exit 0;;
+                * ) echo "please answer yes or no.";;
+        esac
+}
 source /etc/profile && export PS1="(chroot) ${PS1}"
 
 ans_yN
