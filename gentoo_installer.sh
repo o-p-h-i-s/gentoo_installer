@@ -205,6 +205,7 @@ grub-mkconfig -o /boot/grub/grub.cfg
 
 echo "-----------------------------------------
 - Setting root password & reboot system -
+-       & hosts file                    -
 - #passwd                               -
 - #exit                                 -
 - #cd                                   -
