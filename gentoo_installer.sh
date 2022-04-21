@@ -85,7 +85,7 @@ rm /mnt/gentoo/stage3-*.tar.*
 echo "-------------------------------
 - Configuring compile options -
 -------------------------------"
-echo ${compile_opts} > /mnt/gentoo/etc/portage/make.conf
+echo "${compile_opts}" > /mnt/gentoo/etc/portage/make.conf
 
 echo "--------------------------------------------
 - Configuring the gentoo ebuild repository -
