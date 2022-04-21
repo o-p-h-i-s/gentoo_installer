@@ -68,7 +68,7 @@ sgdisk -n 1:0:+${efi_size} -t 1:ef00 ${target_disk}
 sgdisk -n 2:0:-${swap_size} -t 2:8300 ${target_disk}
 sgdisk -n 3:0: -t 3:8200 ${target_disk}
 
-ans_yN
+#ans_yN
 echo "-------------------------
 - Creating file systems -
 -------------------------"
@@ -76,47 +76,47 @@ mkfs.vfat -F32 ${target_disk}1
 mkfs.ext4 ${target_disk}2
 mkswap ${target_disk}3
 
-ans_yN
+#ans_yN
 echo "-----------------------
 - Mounting partitions -
 -----------------------"
 swapon ${target_disk}3
 mount ${target_disk}2 /mnt/gentoo
 
-ans_yN
+#ans_yN
 echo "---------------------------------
 - Downloading the stage tarball -
 ---------------------------------"
 cd /mnt/gentoo
 wget ${path_tarball}
 
-ans_yN
+#ans_yN
 echo "-------------------------------
 - Unpacking the stage tarball -
 -------------------------------"
 tar xpvf stage3-*.tar.xz --xattrs-include='*.*' --numeric-owner
 rm /mnt/gentoo/stage3-*.tar.*
 
-ans_yN
+#ans_yN
 echo "-------------------------------
 - Configuring compile options -
 -------------------------------"
 echo ${compile_opts} > /mnt/gentoo/etc/portage/make.conf
 
-ans_yN
+#ans_yN
 echo "--------------------------------------------
 - Configuring the gentoo ebuild repository -
 --------------------------------------------"
 mkdir --parents /mnt/gentoo/etc/portage/repos.conf
 cp /mnt/gentoo/usr/share/portage/config/repos.conf /mnt/gentoo/etc/portage/repos.conf/gentoo.conf
 
-ans_yN
+#ans_yN
 echo "-----------------
 - Copy DNS info -
 -----------------"
 cp --dereference /etc/resolv.conf /mnt/gentoo/etc/
 
-ans_yN
+#ans_yN
 echo "--------------------------------------
 - Mounting the necessary filesystems -
 --------------------------------------"
@@ -128,11 +128,13 @@ mount --make-rslave /mnt/gentoo/dev
 mount --bind /run /mnt/gentoo/run
 mount --make-slave /mnt/gentoo/run 
 
-ans_yN
+#ans_yN
 echo "--------------------------------
 - Entering the new environment -
 --------------------------------"
-chroot /mnt/gentoo /bin/bash << EOT
+chroot /mnt/gentoo /bin/bash  -s << EOT
+#!/bin/bash
+set -e
 ## functions
 # debug
 function ans_yN() {
