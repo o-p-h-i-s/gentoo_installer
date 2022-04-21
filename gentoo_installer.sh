@@ -185,9 +185,7 @@ echo hostname=${host_name} > /etc/conf.d/hostname
 echo dns_domain_lo="homenetwork" > /etc/conf.d/net
 emerge net-misc/dhcpcd
 rc-update add dhcpcd default
-sed -e "s/127.0.0.1	localhost/127.0.0.1	${host_name}.homenetwork ${host_name} localhost" /etc/hosts > /etc/hosts
 
-sleep 5
 echo "---------------------------
 - Installing system tools -
 ---------------------------"
@@ -195,7 +193,6 @@ emerge sys-process/cronie net-misc/chrony sys-fs/dosfstools
 rc-update add cronie default
 rc-update add chronyd default
 
-sleep 5
 echo "--------------------------
 - Configuring bootloader -
 --------------------------"
@@ -206,7 +203,6 @@ echo GRUB_DISABLE_OS_PROBER=false >> /etc/default/grub
 echo GRUB_EARLY_INITRD_LINUX_CUSTOM="ucode.cpio" >> /etc/default/grub
 grub-mkconfig -o /boot/grub/grub.cfg
 
-sleep 5
 echo "-----------------------------------------
 - Setting root password & reboot system -
 - #passwd                               -
