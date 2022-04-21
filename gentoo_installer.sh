@@ -1,4 +1,4 @@
-#!/bin/sh
+#!/bin/bash
 set -e
 
 ## variables
@@ -47,6 +47,17 @@ EOF
 )
 host_name=$2
 
+## functions
+# debug
+function ans_yN() {
+        read -p "ok? (y/N): " yn
+        case $yn in
+                "" | [yY]* ) :;;
+                [nN]* ) exit 0;;
+                * ) echo "please answer yes or no.";;
+        esac
+}
+
 ## main
 echo "-------------------------
 - Partitioning the disk -
@@ -57,6 +68,7 @@ sgdisk -n 1:0:+${efi_size} -t 1:ef00 ${target_disk}
 sgdisk -n 2:0:-${swap_size} -t 2:8300 ${target_disk}
 sgdisk -n 3:0: -t 3:8200 ${target_disk}
 
+ans_yN
 echo "-------------------------
 - Creating file systems -
 -------------------------"
@@ -64,39 +76,46 @@ mkfs.vfat -F32 ${target_disk}1
 mkfs.ext4 ${target_disk}2
 mkswap ${target_disk}3
 
+ans_yN
 echo "-----------------------
 - Mounting partitions -
 -----------------------"
 swapon ${target_disk}3
 mount ${target_disk}2 /mnt/gentoo
 
+ans_yN
 echo "---------------------------------
 - Downloading the stage tarball -
 ---------------------------------"
 cd /mnt/gentoo
 wget ${path_tarball}
 
+ans_yN
 echo "-------------------------------
 - Unpacking the stage tarball -
 -------------------------------"
 tar xpvf stage3-*.tar.xz --xattrs-include='*.*' --numeric-owner
 
+ans_yN
 echo "-------------------------------
 - Configuring compile options -
 -------------------------------"
 echo ${compile_opts} > /mnt/gentoo/etc/portage/make.conf
 
+ans_yN
 echo "--------------------------------------------
 - Configuring the gentoo ebuild repository -
 --------------------------------------------"
 mkdir --parents /mnt/gentoo/etc/portage/repos.conf
 cp /mnt/gentoo/usr/share/portage/config/repos.conf /mnt/gentoo/etc/portage/repos.conf/gentoo.conf
 
+ans_yN
 echo "-----------------
 - Copy DNS info -
 -----------------"
 cp --dereference /etc/resolv.conf /mnt/gentoo/etc/
 
+ans_yN
 echo "--------------------------------------
 - Mounting the necessary filesystems -
 --------------------------------------"
@@ -108,29 +127,33 @@ mount --make-rslave /mnt/gentoo/dev
 mount --bind /run /mnt/gentoo/run
 mount --make-slave /mnt/gentoo/run 
 
+ans_yN
 echo "--------------------------------
 - Entering the new environment -
 --------------------------------"
 chroot /mnt/gentoo /bin/bash << EOT
 source /etc/profile && export PS1="(chroot) ${PS1}"
-mount /dev/sda1 /boot
 
+ans_yN
 echo "-------------------------------
 - Mounting the boot partition -
 -------------------------------"
-mount /dev/sdb1 /boot
+mount ${target_disk}1 /boot
 
+ans_yN
 echo "-----------------------
 - Configuring Portage -
 -----------------------"
 emerge-webrsync
 
+ans_yN
 echo "------------
 - Timezone -
 ------------"
 echo "Asia/Tokyo" > /etc/timezone
 emerge --config sys-libs/timezone-data
 
+ans_yN
 echo "---------------------
 - Configure locales -
 ---------------------"
@@ -142,11 +165,13 @@ locale-gen
 eselect locale set 4
 env-update && source /etc/profile && export PS1="(chroot) ${PS1}"
 
+ans_yN
 echo "-------------------------------------
 - Installing firmware and microcode -
 -------------------------------------"
 emerge sys-kernel/linux-firmware sys-firmware/intel-microcode
 
+ans_yN
 echo "--------------------------
 - Installing the sources -
 --------------------------"
@@ -158,6 +183,7 @@ UUID=$(blkid -s UUID -o value ${target_disk}1)	/boot		vfat		defaults,noatime	0 2
 EOF
 genkernel --microcode-initramfs all
 
+ans_yN
 echo "---------------------------
 - Creating the fstab file -
 ---------------------------"
@@ -167,6 +193,7 @@ UUID=$(blkid -s UUID -o value ${target_disk}3)	none		swap		sw	0 0
 /dev/cdrom	/mnt/cdrom	auto		noauto,user	0 0
 EOF
 
+ans_yN
 echo "-------------------------
 - network configuration -
 -------------------------"
@@ -176,6 +203,7 @@ emerge net-misc/dhcpcd
 rc-update add dhcpcd default
 sed -e "s/127.0.0.1	localhost/127.0.0.1	${host_name}.homenetwork ${host_name} localhost" /etc/hosts > /etc/hosts
 
+ans_yN
 echo "---------------------------
 - Installing system tools -
 ---------------------------"
@@ -183,6 +211,7 @@ emerge sys-process/cronie net-misc/chrony sys-fs/dosfstools
 rc-update add cronie default
 rc-update add chronyd default
 
+ans_yN
 echo "--------------------------
 - Configuring bootloader -
 --------------------------"
@@ -193,6 +222,7 @@ echo GRUB_DISABLE_OS_PROBER=false >> /etc/default/grub
 echo GRUB_EARLY_INITRD_LINUX_CUSTOM="ucode.cpio" >> /etc/default/grub
 grub-mkconfig -o /boot/grub/grub.cfg
 
+ans_yN
 echo "-----------------------------------------
 - Setting root password & reboot system -
 - #passwd                               -
