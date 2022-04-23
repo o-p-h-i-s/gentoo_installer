@@ -10,7 +10,7 @@ path_body="current-stage3-amd64-desktop-openrc/"
 latest=${path_head}"latest-stage3-amd64-desktop-openrc.txt"
 path_footer=$(curl -Ss ${latest} | grep -v '^#' | awk -F "[/ ]" '{print $2}')
 path_tarball=${path_head}${path_body}${path_footer}
-compile_opts=$(cat << EOF
+compile_opts=$(cat << "EOF"
 # These settings were set by the catalyst build script that automatically
 # built this stage.
 # Please consult /usr/share/portage/config/make.conf.example for a more
@@ -182,7 +182,7 @@ echo "-------------------------
 - network configuration -
 -------------------------"
 echo hostname=${host_name} > /etc/conf.d/hostname
-echo dns_domain_lo="homenetwork" > /etc/conf.d/net
+echo 'dns_domain_lo="homenetwork"' > /etc/conf.d/net
 emerge net-misc/dhcpcd
 rc-update add dhcpcd default
 
@@ -200,7 +200,7 @@ echo ">=sys-boot/grub-2.06-r1 mount" > /etc/portage/package.use/grub
 emerge sys-boot/grub sys-boot/os-prober
 grub-install --target=x86_64-efi --efi-directory=/boot --removable
 echo GRUB_DISABLE_OS_PROBER=false >> /etc/default/grub
-echo GRUB_EARLY_INITRD_LINUX_CUSTOM="ucode.cpio" >> /etc/default/grub
+echo 'GRUB_EARLY_INITRD_LINUX_CUSTOM="ucode.cpio"' >> /etc/default/grub
 grub-mkconfig -o /boot/grub/grub.cfg
 
 echo "-----------------------------------------
